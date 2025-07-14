@@ -45,7 +45,7 @@ It allows users to add, complete, delete, and persist tasks using the browser's 
    ```bash
       git clone https://github.com/ykhuzaimashoaib/Todo-List.git
 
-3. Navigate to the project folder:
+2. Navigate to the project folder:
 
 cd todo-list-app
 
