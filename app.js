@@ -6,9 +6,11 @@ const taskInput = document.getElementById("task_input");
 const taskList = document.getElementById("task_list");
 const progressBar = document.getElementById("progress");
 const progressNumbers = document.getElementById("numbers");
+const update = document.getElementById("update");
 const date = document.getElementById("datetime");
 
 date.innerHTML = dt.toLocaleString();
+var editIndex = -1;
 
 document.addEventListener("DOMContentLoaded", () => {
   var storedTasks = JSON.parse(localStorage.getItem("tasks"));
@@ -27,13 +29,37 @@ function saveTask() {
 function addTask() {
   var text = taskInput.value.trim();
 
+  if (!text) {
+    taskInput.setCustomValidity("Please Enter a task");
+    taskInput.reportValidity();
+    return;
+  }
+
+  taskInput.setCustomValidity("");
+
   if (text) {
-    tasks.push({
+    var newTask = {
       text: text,
       done: false,
       id: crypto.randomUUID(),
-    });
-    taskInput.value = "";
+    };
+
+    if (editIndex !== -1) {
+      tasks.splice(editIndex, 0, newTask);
+      editIndex = -1;
+      taskInput.value = "";
+      taskInput.placeholder = "Task Updated!";
+      taskInput.classList.add("updated");
+      update.style.display = "none";
+      setTimeout(() => {
+        taskInput.placeholder = "Add a task";
+        taskInput.classList.remove("updated");
+      }, 2000);
+    } else {
+      tasks.push(newTask);
+      taskInput.value = "";
+    }
+
     updateTaskList();
     updateStats();
     saveTask();
@@ -86,7 +112,11 @@ function toggleTaskComplete(index) {
 
 function editTask(index) {
   taskInput.value = tasks[index].text;
+  editIndex = index;
   tasks.splice(index, 1);
+
+  update.style.display = "block";
+
   updateTaskList();
   updateStats();
   saveTask();
@@ -145,4 +175,3 @@ function blastEffect() {
     startVelocity: 45,
   });
 }
-
